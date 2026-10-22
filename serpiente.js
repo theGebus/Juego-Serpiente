@@ -17,18 +17,20 @@ function dibujarTodo() {
 
 function dibujarTablero() {
   ctx.strokeStyle = "#57D9AD";
-  ctx.beginPath();
-  ctx.moveTo(25, 0);
-  ctx.lineTo(25, canvas.height);
-  ctx.stroke();
 
-  ctx.beginPath();
-  ctx.moveTo(50, 0);
-  ctx.lineTo(50, canvas.height);
-  ctx.stroke();
+  // Líneas verticales: recorren todo el alto del canvas.
+  for (let x = 0; x <= canvas.width; x += TAMANIO_CELDA) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
 
-  ctx.beginPath();
-  ctx.moveTo(0, 25);
-  ctx.lineTo(canvas.width, 25);
-  ctx.stroke();
+  // Líneas horizontales: recorren todo el ancho del canvas.
+  for (let y = 0; y <= canvas.height; y += TAMANIO_CELDA) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
 }
