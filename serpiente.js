@@ -63,3 +63,17 @@ function pintarSerpiente() {
     pintarParte(serpiente[i].x, serpiente[i].y);
   }
 }
+
+function moverDerecha() {
+  const cabeza = serpiente[0];
+  const nuevaCabeza = {x: cabeza.x + (1), y: cabeza.y + (0)};
+  serpiente.unshift(nuevaCabeza);
+  serpiente.pop();
+}
+
+function cambiarDireccion(direccion) {
+  if (direccion === "derecha") {
+    moverDerecha();
+  }
+  dibujarTodo();
+}
