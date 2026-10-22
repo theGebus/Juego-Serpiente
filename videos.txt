@@ -1,0 +1,11 @@
+Video explicativo de la parte 4
+Enlace de Google Drive: pendiente de grabación y publicación.
+
+Temas para explicar:
+1. siguienteCabeza calcula la próxima celda y moverSerpiente verifica los cuatro límites antes de mover.
+2. finalizarJuego detiene el intervalo, activa gameOver y muestra el puntaje.
+3. reiniciarJuego restaura la serpiente, dirección, puntaje, comida y estado inicial. Iniciar permite volver a jugar.
+4. velocidad = 300 determina los milisegundos entre movimientos.
+5. cambiarDireccion compara la próxima posición con el cuello para evitar retrocesos. cambioPendiente limita los giros a uno por movimiento.
+6. El evento keydown permite usar flechas y WASD. Espacio pausa o continúa.
+7. El choque con el cuerpo termina la partida; se permite entrar a la celda de la cola si se libera en ese turno.

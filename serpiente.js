@@ -15,6 +15,9 @@ let intervaloSerpiente = null;
 let direccionActual = "derecha";
 let comida = null;
 let puntaje = 0;
+let gameOver = false;
+let velocidad = 300;
+let cambioPendiente = false;
 
 // Primera pintura del juego al cargar la página.
 dibujarTodo();
@@ -78,10 +81,19 @@ function moverDerecha() {
 }
 
 function cambiarDireccion(direccion) {
-  if (direccion === "derecha" || direccion === "izquierda" ||
-      direccion === "arriba" || direccion === "abajo") {
-    direccionActual = direccion;
+  if (gameOver || cambioPendiente) return;
+  if (direccion !== "derecha" && direccion !== "izquierda" &&
+      direccion !== "arriba" && direccion !== "abajo") return;
+  const anterior = direccionActual;
+  direccionActual = direccion;
+  const siguiente = siguienteCabeza();
+  // Comparar con el cuello evita retroceder incluso en la posición inicial.
+  if (serpiente.length > 1 &&
+      siguiente.x === serpiente[1].x && siguiente.y === serpiente[1].y) {
+    direccionActual = anterior;
+    return;
   }
+  cambioPendiente = direccion !== anterior;
 }
 
 function moverIzquierda() {
@@ -106,22 +118,45 @@ function moverAbajo() {
 }
 
 function iniciarJuego() {
-  if (intervaloSerpiente !== null) {
+  if (gameOver || intervaloSerpiente !== null) {
     return;
   }
-  intervaloSerpiente = setInterval(moverSerpiente, 1000);
+  intervaloSerpiente = setInterval(moverSerpiente, velocidad);
   document.getElementById("estado").textContent = "Jugando";
-  document.getElementById("mensaje").textContent = "Usa los botones para cambiar de dirección.";
+  document.getElementById("mensaje").textContent = "Usa las flechas, WASD o los botones. Espacio para pausar.";
 }
 
 function pausarJuego() {
   clearInterval(intervaloSerpiente);
   intervaloSerpiente = null;
+  if (gameOver) {
+    return;
+  }
   document.getElementById("estado").textContent = "Pausado";
   document.getElementById("mensaje").textContent = "Presiona Iniciar para continuar.";
 }
 
 function moverSerpiente() {
+  if (gameOver || intervaloSerpiente === null) {
+    return;
+  }
+  const siguiente = siguienteCabeza();
+  if (siguiente.x < 0 || siguiente.x >= canvas.width / TAMANIO_CELDA ||
+      siguiente.y < 0 || siguiente.y >= canvas.height / TAMANIO_CELDA) {
+    finalizarJuego("La serpiente tocó el borde.");
+    return;
+  }
+  const vaAComer = comida !== null &&
+    siguiente.x === comida.x && siguiente.y === comida.y;
+  // La cola libera su celda en este turno, salvo cuando la serpiente crece.
+  const limite = vaAComer ? serpiente.length : serpiente.length - 1;
+  for (let i = 1; i < limite; i++) {
+    if (siguiente.x === serpiente[i].x && siguiente.y === serpiente[i].y) {
+      finalizarJuego("La serpiente chocó con su cuerpo.");
+      return;
+    }
+  }
+  cambioPendiente = false;
   const ultimaParte = serpiente[serpiente.length - 1];
   const colaAnterior = {x: ultimaParte.x, y: ultimaParte.y};
   if (direccionActual === "derecha") {
@@ -163,22 +198,15 @@ function pintarComida() {
       }
     }
     if (posicionesLibres.length === 0) {
-      pausarJuego();
-      document.getElementById("estado").textContent = "Tablero completo";
+      gameOver = true;
+      clearInterval(intervaloSerpiente);
+      intervaloSerpiente = null;
+      document.getElementById("estado").textContent = "¡Ganaste!";
+      document.getElementById("mensaje").textContent = "Completaste el tablero. Presiona Reiniciar para volver a jugar.";
       return;
     }
-    let posicionValida = false;
-    while (!posicionValida) {
-      const x = Math.floor(Math.random() * columnas);
-      const y = Math.floor(Math.random() * filas);
-      for (let i = 0; i < posicionesLibres.length; i++) {
-        if (posicionesLibres[i].x === x && posicionesLibres[i].y === y) {
-          comida = {x: x, y: y};
-          posicionValida = true;
-          break;
-        }
-      }
-    }
+    const indice = Math.floor(Math.random() * posicionesLibres.length);
+    comida = posicionesLibres[indice];
   }
   ctx.fillStyle = "#FF6B6B";
   pintarParte(comida.x, comida.y);
@@ -191,11 +219,13 @@ function atrapaComida() {
 
 function reiniciarJuego() {
   pausarJuego();
+  gameOver = false;
   serpiente.length = 0;
   for (let y = 15; y <= 19; y++) {
     serpiente.push({x: 0, y: y});
   }
   direccionActual = "derecha";
+  cambioPendiente = false;
   puntaje = 0;
   comida = null;
   document.getElementById("puntaje").textContent = puntaje;
@@ -203,3 +233,41 @@ function reiniciarJuego() {
   document.getElementById("mensaje").textContent = "Presiona iniciar para comenzar.";
   dibujarTodo();
 }
+
+function siguienteCabeza() {
+  const siguiente = {x: serpiente[0].x, y: serpiente[0].y};
+  if (direccionActual === "derecha") siguiente.x++;
+  else if (direccionActual === "izquierda") siguiente.x--;
+  else if (direccionActual === "arriba") siguiente.y--;
+  else if (direccionActual === "abajo") siguiente.y++;
+  return siguiente;
+}
+
+function finalizarJuego(motivo) {
+  gameOver = true;
+  clearInterval(intervaloSerpiente);
+  intervaloSerpiente = null;
+  document.getElementById("estado").textContent = "GAME OVER";
+  document.getElementById("mensaje").textContent =
+    motivo + " Puntaje: " + puntaje + ". Presiona Reiniciar para jugar otra vez.";
+}
+
+document.addEventListener("keydown", function (evento) {
+  if (evento.target && (["INPUT", "TEXTAREA", "SELECT"].includes(evento.target.tagName) ||
+      evento.target.isContentEditable)) return;
+  const tecla = evento.key.toLowerCase();
+  let direccion = null;
+  if (tecla === "arrowup" || tecla === "w") direccion = "arriba";
+  else if (tecla === "arrowdown" || tecla === "s") direccion = "abajo";
+  else if (tecla === "arrowleft" || tecla === "a") direccion = "izquierda";
+  else if (tecla === "arrowright" || tecla === "d") direccion = "derecha";
+  if (direccion !== null) {
+    evento.preventDefault();
+    cambiarDireccion(direccion);
+  } else if (tecla === " " && !(evento.target && evento.target.tagName === "BUTTON")) {
+    evento.preventDefault();
+    if (evento.repeat) return;
+    if (intervaloSerpiente === null) iniciarJuego();
+    else pausarJuego();
+  }
+});
