@@ -48,7 +48,6 @@ function pintarParte(lineaX, lineaY) {
   const x = lineaX * TAMANIO_CELDA;
   const y = lineaY * TAMANIO_CELDA;
 
-  ctx.fillStyle = "#57D9AD";
   ctx.fillRect(x, y, TAMANIO_CELDA, TAMANIO_CELDA);
   ctx.strokeStyle = "#F5F5F5";
   ctx.strokeRect(x, y, TAMANIO_CELDA, TAMANIO_CELDA);
@@ -56,6 +55,11 @@ function pintarParte(lineaX, lineaY) {
 
 function pintarSerpiente() {
   for (let i = 0; i < serpiente.length; i++) {
+    if (i === 0) {
+      ctx.fillStyle = "#FFD54F";
+    } else {
+      ctx.fillStyle = "#57D9AD";
+    }
     pintarParte(serpiente[i].x, serpiente[i].y);
   }
 }
