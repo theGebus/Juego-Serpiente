@@ -4,10 +4,11 @@ const ctx = canvas.getContext("2d");
 const TAMANIO_CELDA = 25;
 
 const serpiente = [
-  {x: 8, y: 9},
-  {x: 9, y: 9},
-  {x: 10, y: 9},
-  {x: 10, y: 10}
+  {x: 0, y: 15},
+  {x: 0, y: 16},
+  {x: 0, y: 17},
+  {x: 0, y: 18},
+  {x: 0, y: 19}
 ];
 
 // Primera pintura del juego al cargar la página.
