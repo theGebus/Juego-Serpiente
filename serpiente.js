@@ -11,6 +11,8 @@ const serpiente = [
   {x: 0, y: 19}
 ];
 
+let intervaloSerpiente = null;
+
 // Primera pintura del juego al cargar la página.
 dibujarTodo();
 
@@ -103,4 +105,24 @@ function moverAbajo() {
   const nuevaCabeza = {x: cabeza.x + (0), y: cabeza.y + (1)};
   serpiente.unshift(nuevaCabeza);
   serpiente.pop();
+}
+
+function iniciarJuego() {
+  if (intervaloSerpiente !== null) {
+    return;
+  }
+  intervaloSerpiente = setInterval(moverSerpiente, 1000);
+  document.getElementById("estado").textContent = "Jugando";
+  document.getElementById("mensaje").textContent = "Usa los botones para cambiar de dirección.";
+}
+
+function pausarJuego() {
+  clearInterval(intervaloSerpiente);
+  intervaloSerpiente = null;
+  document.getElementById("estado").textContent = "Pausado";
+  document.getElementById("mensaje").textContent = "Presiona Iniciar para continuar.";
+}
+
+function moverSerpiente() {
+  console.log("moviendo");
 }
