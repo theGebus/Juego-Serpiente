@@ -16,6 +16,7 @@ let direccionActual = "derecha";
 let comida = null;
 let puntaje = 0;
 let gameOver = false;
+let velocidad = 300;
 
 // Primera pintura del juego al cargar la página.
 dibujarTodo();
@@ -110,7 +111,7 @@ function iniciarJuego() {
   if (gameOver || intervaloSerpiente !== null) {
     return;
   }
-  intervaloSerpiente = setInterval(moverSerpiente, 1000);
+  intervaloSerpiente = setInterval(moverSerpiente, velocidad);
   document.getElementById("estado").textContent = "Jugando";
   document.getElementById("mensaje").textContent = "Usa los botones para cambiar de dirección.";
 }
