@@ -14,6 +14,7 @@ const serpiente = [
 let intervaloSerpiente = null;
 let direccionActual = "derecha";
 let comida = null;
+let puntaje = 0;
 
 // Primera pintura del juego al cargar la página.
 dibujarTodo();
@@ -121,6 +122,8 @@ function pausarJuego() {
 }
 
 function moverSerpiente() {
+  const ultimaParte = serpiente[serpiente.length - 1];
+  const colaAnterior = {x: ultimaParte.x, y: ultimaParte.y};
   if (direccionActual === "derecha") {
     moverDerecha();
   } else if (direccionActual === "izquierda") {
@@ -129,6 +132,13 @@ function moverSerpiente() {
     moverArriba();
   } else if (direccionActual === "abajo") {
     moverAbajo();
+  }
+  if (atrapaComida()) {
+    puntaje++;
+    document.getElementById("puntaje").textContent = puntaje;
+    // Recuperamos la celda que dejó la cola para crecer sin separar el cuerpo.
+    serpiente.push(colaAnterior);
+    comida = null;
   }
   dibujarTodo();
 }
@@ -177,4 +187,19 @@ function pintarComida() {
 function atrapaComida() {
   return comida !== null &&
     serpiente[0].x === comida.x && serpiente[0].y === comida.y;
+}
+
+function reiniciarJuego() {
+  pausarJuego();
+  serpiente.length = 0;
+  for (let y = 15; y <= 19; y++) {
+    serpiente.push({x: 0, y: y});
+  }
+  direccionActual = "derecha";
+  puntaje = 0;
+  comida = null;
+  document.getElementById("puntaje").textContent = puntaje;
+  document.getElementById("estado").textContent = "Listo";
+  document.getElementById("mensaje").textContent = "Presiona iniciar para comenzar.";
+  dibujarTodo();
 }
