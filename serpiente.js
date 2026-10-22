@@ -15,6 +15,7 @@ let intervaloSerpiente = null;
 let direccionActual = "derecha";
 let comida = null;
 let puntaje = 0;
+let gameOver = false;
 
 // Primera pintura del juego al cargar la página.
 dibujarTodo();
@@ -106,7 +107,7 @@ function moverAbajo() {
 }
 
 function iniciarJuego() {
-  if (intervaloSerpiente !== null) {
+  if (gameOver || intervaloSerpiente !== null) {
     return;
   }
   intervaloSerpiente = setInterval(moverSerpiente, 1000);
@@ -117,11 +118,23 @@ function iniciarJuego() {
 function pausarJuego() {
   clearInterval(intervaloSerpiente);
   intervaloSerpiente = null;
+  if (gameOver) {
+    return;
+  }
   document.getElementById("estado").textContent = "Pausado";
   document.getElementById("mensaje").textContent = "Presiona Iniciar para continuar.";
 }
 
 function moverSerpiente() {
+  if (gameOver || intervaloSerpiente === null) {
+    return;
+  }
+  const siguiente = siguienteCabeza();
+  if (siguiente.x < 0 || siguiente.x >= canvas.width / TAMANIO_CELDA ||
+      siguiente.y < 0 || siguiente.y >= canvas.height / TAMANIO_CELDA) {
+    finalizarJuego("La serpiente tocó el borde.");
+    return;
+  }
   const ultimaParte = serpiente[serpiente.length - 1];
   const colaAnterior = {x: ultimaParte.x, y: ultimaParte.y};
   if (direccionActual === "derecha") {
@@ -191,6 +204,7 @@ function atrapaComida() {
 
 function reiniciarJuego() {
   pausarJuego();
+  gameOver = false;
   serpiente.length = 0;
   for (let y = 15; y <= 19; y++) {
     serpiente.push({x: 0, y: y});
@@ -202,4 +216,22 @@ function reiniciarJuego() {
   document.getElementById("estado").textContent = "Listo";
   document.getElementById("mensaje").textContent = "Presiona iniciar para comenzar.";
   dibujarTodo();
+}
+
+function siguienteCabeza() {
+  const siguiente = {x: serpiente[0].x, y: serpiente[0].y};
+  if (direccionActual === "derecha") siguiente.x++;
+  else if (direccionActual === "izquierda") siguiente.x--;
+  else if (direccionActual === "arriba") siguiente.y--;
+  else if (direccionActual === "abajo") siguiente.y++;
+  return siguiente;
+}
+
+function finalizarJuego(motivo) {
+  gameOver = true;
+  clearInterval(intervaloSerpiente);
+  intervaloSerpiente = null;
+  document.getElementById("estado").textContent = "GAME OVER";
+  document.getElementById("mensaje").textContent =
+    motivo + " Puntaje: " + puntaje + ". Presiona Reiniciar para jugar otra vez.";
 }
