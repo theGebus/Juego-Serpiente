@@ -21,4 +21,14 @@ function dibujarTablero() {
   ctx.moveTo(25, 0);
   ctx.lineTo(25, canvas.height);
   ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(50, 0);
+  ctx.lineTo(50, canvas.height);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 25);
+  ctx.lineTo(canvas.width, 25);
+  ctx.stroke();
 }
