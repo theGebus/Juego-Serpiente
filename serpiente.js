@@ -13,6 +13,12 @@ function limpiarCanvas() {
 function dibujarTodo() {
   limpiarCanvas();
   dibujarTablero();
+  pintarParte(5, 5);
+  pintarParte(10, 2);
+  pintarParte(5, 19);
+  pintarParte(19, 8);
+  pintarParte(0, 10);
+  pintarParte(19, 19);
 }
 
 function dibujarTablero() {
@@ -33,4 +39,14 @@ function dibujarTablero() {
     ctx.lineTo(canvas.width, y);
     ctx.stroke();
   }
+}
+
+function pintarParte(lineaX, lineaY) {
+  const x = lineaX * TAMANIO_CELDA;
+  const y = lineaY * TAMANIO_CELDA;
+
+  ctx.fillStyle = "#57D9AD";
+  ctx.fillRect(x, y, TAMANIO_CELDA, TAMANIO_CELDA);
+  ctx.strokeStyle = "#F5F5F5";
+  ctx.strokeRect(x, y, TAMANIO_CELDA, TAMANIO_CELDA);
 }
