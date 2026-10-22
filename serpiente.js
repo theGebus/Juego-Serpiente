@@ -74,6 +74,33 @@ function moverDerecha() {
 function cambiarDireccion(direccion) {
   if (direccion === "derecha") {
     moverDerecha();
+  } else if (direccion === "izquierda") {
+    moverIzquierda();
+  } else if (direccion === "arriba") {
+    moverArriba();
+  } else if (direccion === "abajo") {
+    moverAbajo();
   }
   dibujarTodo();
+}
+
+function moverIzquierda() {
+  const cabeza = serpiente[0];
+  const nuevaCabeza = {x: cabeza.x + (-1), y: cabeza.y + (0)};
+  serpiente.unshift(nuevaCabeza);
+  serpiente.pop();
+}
+
+function moverArriba() {
+  const cabeza = serpiente[0];
+  const nuevaCabeza = {x: cabeza.x + (0), y: cabeza.y + (-1)};
+  serpiente.unshift(nuevaCabeza);
+  serpiente.pop();
+}
+
+function moverAbajo() {
+  const cabeza = serpiente[0];
+  const nuevaCabeza = {x: cabeza.x + (0), y: cabeza.y + (1)};
+  serpiente.unshift(nuevaCabeza);
+  serpiente.pop();
 }
